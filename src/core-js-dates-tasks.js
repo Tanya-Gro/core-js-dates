@@ -226,8 +226,17 @@ function getNextFridayThe13th(date) {
  * Date(2024, 5, 1) => 2
  * Date(2024, 10, 10) => 4
  */
-function getQuarter(/* date */) {
-  throw new Error('Not implemented');
+function getQuarter(date) {
+  if (date <= new Date(date.getFullYear(), 5, 1)) {
+    if (date < new Date(date.getFullYear(), 2, 1)) {
+      return 1;
+    }
+    return 2;
+  }
+  if (date < new Date(date.getFullYear(), 8, 1)) {
+    return 3;
+  }
+  return 4;
 }
 
 /**
@@ -248,8 +257,32 @@ function getQuarter(/* date */) {
  * { start: '01-01-2024', end: '15-01-2024' }, 1, 3 => ['01-01-2024', '05-01-2024', '09-01-2024', '13-01-2024']
  * { start: '01-01-2024', end: '10-01-2024' }, 1, 1 => ['01-01-2024', '03-01-2024', '05-01-2024', '07-01-2024', '09-01-2024']
  */
-function getWorkSchedule(/* period, countWorkDays, countOffDays */) {
-  throw new Error('Not implemented');
+function getWorkSchedule(period, countWorkDays, countOffDays) {
+  const result = [];
+  const arrDataStart = period.start.split('-');
+  const arrDataEnd = period.end.split('-');
+  const startData = new Date(
+    arrDataStart[2],
+    +arrDataStart[1] - 1,
+    arrDataStart[0]
+  );
+  startData.setDate(startData.getDate() - 1);
+  const endData = new Date(arrDataEnd[2], +arrDataEnd[1] - 1, arrDataEnd[0]);
+
+  while (startData <= endData) {
+    for (let i = 0; i < countWorkDays; i += 1) {
+      startData.setDate(startData.getDate() + 1);
+      if (startData <= endData) {
+        result.push(
+          `${startData.getDate().toString().padStart(2, '0')}-${(startData.getMonth() + 1).toString().padStart(2, '0')}-${startData.getFullYear()}`
+        );
+      } else {
+        break;
+      }
+    }
+    startData.setDate(startData.getDate() + countOffDays);
+  }
+  return result;
 }
 
 /**
